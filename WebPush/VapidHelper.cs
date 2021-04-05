@@ -75,69 +75,61 @@ namespace WebPush
         {
             if (string.IsNullOrEmpty(audience))
             {
-                throw new ArgumentException(@"No audience could be generated for VAPID.");
+                throw new ArgumentException(@"No audience could be generated for VAPID.", nameof(audience));
             }
 
             if (audience.Length == 0)
             {
                 throw new ArgumentException(
-                    @"The audience value must be a string containing the origin of a push service. " + audience);
+                    $@"The audience value must be a string containing the origin of a push service. {audience}", nameof(audience));
             }
 
             if (!Uri.IsWellFormedUriString(audience, UriKind.Absolute))
             {
-                throw new ArgumentException(@"VAPID audience is not a url.");
+                throw new ArgumentException(@"VAPID audience is not a url.", nameof(audience));
             }
         }
 
         public static void ValidateSubject(string subject)
         {
-            if (string.IsNullOrEmpty(subject))
+            if (string.IsNullOrWhiteSpace(subject))
             {
-                throw new ArgumentException(@"A subject is required");
+                throw new ArgumentNullException(nameof(subject), "A subject is required");
             }
 
-            if (subject.Length == 0)
+            if (!Uri.IsWellFormedUriString(subject, UriKind.Absolute))
             {
-                throw new ArgumentException(@"The subject value must be a string containing a url or mailto: address.");
-            }
-
-            if (!subject.StartsWith("mailto:"))
-            {
-                if (!Uri.IsWellFormedUriString(subject, UriKind.Absolute))
-                {
-                    throw new ArgumentException(@"Subject is not a valid URL or mailto address");
-                }
+                throw new ArgumentException(@"Subject is not a valid URL or mailto address");
             }
         }
 
         public static void ValidatePublicKey(string publicKey)
         {
-            if (string.IsNullOrEmpty(publicKey))
+            if (string.IsNullOrWhiteSpace(publicKey))
             {
-                throw new ArgumentException(@"Valid public key not set");
+                throw new ArgumentNullException(nameof(publicKey), "Valid public key not set");
             }
 
             var decodedPublicKey = UrlBase64.Decode(publicKey);
 
             if (decodedPublicKey.Length != 65)
             {
-                throw new ArgumentException(@"Vapid public key must be 65 characters long when decoded");
+                throw new ArgumentException(@"Vapid public key must be 65 characters long when decoded", nameof(publicKey));
             }
         }
 
         public static void ValidatePrivateKey(string privateKey)
         {
-            if (string.IsNullOrEmpty(privateKey))
+            if (string.IsNullOrWhiteSpace(privateKey))
             {
-                throw new ArgumentException(@"Valid private key not set");
+                throw new ArgumentNullException(nameof(privateKey), "Valid private key not set");
             }
 
             var decodedPrivateKey = UrlBase64.Decode(privateKey);
 
             if (decodedPrivateKey.Length != 32)
             {
-                throw new ArgumentException(@"Vapid private key should be 32 bytes long when decoded.");
+                throw new ArgumentException(@"Vapid private key should be 32 bytes long when decoded.", nameof(privateKey));
             }
         }
 
@@ -145,7 +137,7 @@ namespace WebPush
         {
             if (expiration <= UnixTimeNow())
             {
-                throw new ArgumentException(@"Vapid expiration must be a unix timestamp in the future");
+                throw new ArgumentException("Vapid expiration must be a unix timestamp in the future", nameof(expiration));
             }
         }
 
